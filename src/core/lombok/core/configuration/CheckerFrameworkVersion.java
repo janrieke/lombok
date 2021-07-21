@@ -33,7 +33,6 @@ public final class CheckerFrameworkVersion implements ConfigurationValueType {
 	public static final String NAME__PURE = "org.checkerframework.dataflow.qual.Pure";
 	public static final String NAME__UNIQUE = "org.checkerframework.common.aliasing.qual.Unique";
 	public static final String NAME__RETURNS_RECEIVER = "org.checkerframework.common.returnsreceiver.qual.This";
-	public static final String NAME__NOT_CALLED = "org.checkerframework.checker.calledmethods.qual.NotCalledMethods";
 	public static final String NAME__CALLED = "org.checkerframework.checker.calledmethods.qual.CalledMethods";
 	
 	public static final CheckerFrameworkVersion NONE = new CheckerFrameworkVersion(0);
@@ -57,11 +56,11 @@ public final class CheckerFrameworkVersion implements ConfigurationValueType {
 	}
 	
 	public boolean generateReturnsReceiver() {
-		return version > 3999;
+		return version > 3100;
 	}
 	
 	public boolean generateCalledMethods() {
-		return version > 3999;
+		return version > 3100;
 	}
 	
 	public static CheckerFrameworkVersion valueOf(String versionString) {

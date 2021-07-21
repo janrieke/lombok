@@ -1015,7 +1015,6 @@ public class HandleSuperBuilder extends EclipseAnnotationHandler<SuperBuilder> {
 		}
 		MethodDeclaration setter = HandleSetter.createSetter(td, deprecate, fieldNode, setterName, paramName, nameOfSetFlag, returnType, returnStatement, ClassFileConstants.AccPublic,
 			job.sourceNode, methodAnnsList, annosOnParam != null ? Arrays.asList(copyAnnotations(job.source, annosOnParam)) : Collections.<Annotation>emptyList());
-		if (job.checkerFramework.generateCalledMethods()) setter.receiver = generateNotCalledReceiver(job, setterName);
 		injectMethod(job.builderType, setter);
 	}
 	
