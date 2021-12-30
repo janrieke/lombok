@@ -93,10 +93,9 @@ class CheckerFrameworkSuperBuilder {
 			private ParentBuilderImpl() {
 			}
 			@java.lang.Override
-			@org.checkerframework.common.returnsreceiver.qual.This
 			@org.checkerframework.dataflow.qual.Pure
 			@java.lang.SuppressWarnings("all")
-			protected CheckerFrameworkSuperBuilder.Parent.ParentBuilderImpl self() {
+			protected CheckerFrameworkSuperBuilder.Parent.@org.checkerframework.common.returnsreceiver.qual.This ParentBuilderImpl self() {
 				return this;
 			}
 			@org.checkerframework.dataflow.qual.SideEffectFree
@@ -188,10 +187,9 @@ class CheckerFrameworkSuperBuilder {
 			private ZChildBuilderImpl() {
 			}
 			@java.lang.Override
-			@org.checkerframework.common.returnsreceiver.qual.This
 			@org.checkerframework.dataflow.qual.Pure
 			@java.lang.SuppressWarnings("all")
-			protected CheckerFrameworkSuperBuilder.ZChild.ZChildBuilderImpl self() {
+			protected CheckerFrameworkSuperBuilder.ZChild.@org.checkerframework.common.returnsreceiver.qual.This ZChildBuilderImpl self() {
 				return this;
 			}
 			@org.checkerframework.dataflow.qual.SideEffectFree
