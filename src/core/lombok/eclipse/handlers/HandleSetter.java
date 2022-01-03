@@ -191,14 +191,17 @@ public class HandleSetter extends EclipseAnnotationHandler<Setter> {
 		ReturnStatement returnThis = null;
 		if (shouldReturnThis) {
 			returnType = cloneSelfType(fieldNode, source);
+			if (getCheckerFrameworkVersion(sourceNode).generateReturnsReceiver()) {
+				Annotation rrAnn = generateNamedAnnotation(source, CheckerFrameworkVersion.NAME__RETURNS_RECEIVER);
+				int levels = returnType.getAnnotatableLevels();
+				returnType.annotations = new Annotation[levels][];
+				returnType.annotations[levels-1] = new Annotation[] {rrAnn};
+			}
 			ThisReference thisRef = new ThisReference(pS, pE);
 			returnThis = new ReturnStatement(thisRef, pS, pE);
 		}
 		
 		MethodDeclaration d = createSetter(parent, deprecate, fieldNode, name, paramName, booleanFieldToSet, returnType, returnThis, modifier, sourceNode, onMethod, onParam);
-		if (shouldReturnThis && getCheckerFrameworkVersion(sourceNode).generateReturnsReceiver()) {
-			d.annotations = copyAnnotations(source, d.annotations, new Annotation[] { generateNamedAnnotation(source, CheckerFrameworkVersion.NAME__RETURNS_RECEIVER) });
-		}
 		return d;
 	}
 	
