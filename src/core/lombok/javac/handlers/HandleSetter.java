@@ -195,17 +195,14 @@ public class HandleSetter extends JavacAnnotationHandler<Setter> {
 		JCReturn returnStatement = null;
 		if (shouldReturnThis) {
 			returnType = cloneSelfType(field);
+			if (getCheckerFrameworkVersion(source).generateReturnsReceiver()) {
+				JCAnnotation rrAnnotation = treeMaker.Annotation(genTypeRef(field, CheckerFrameworkVersion.NAME__RETURNS_RECEIVER), List.<JCExpression>nil());
+				returnType = treeMaker.AnnotatedType(List.of(rrAnnotation), returnType);
+			}
 			returnStatement = treeMaker.Return(treeMaker.Ident(field.toName("this")));
 		}
 		
 		JCMethodDecl d = createSetter(access, deprecate, field, treeMaker, setterName, paramName, booleanFieldToSet, returnType, returnStatement, source, onMethod, onParam);
-		if (shouldReturnThis && getCheckerFrameworkVersion(source).generateReturnsReceiver()) {
-			List<JCAnnotation> annotations = d.mods.annotations;
-			if (annotations == null) annotations = List.nil();
-			JCAnnotation anno = treeMaker.Annotation(genTypeRef(source, CheckerFrameworkVersion.NAME__RETURNS_RECEIVER), List.<JCExpression>nil());
-			recursiveSetGeneratedBy(anno, source);
-			d.mods.annotations = annotations.prepend(anno);
-		}
 		return d;
 	}
 	
@@ -214,17 +211,14 @@ public class HandleSetter extends JavacAnnotationHandler<Setter> {
 		JCReturn returnStatement = null;
 		if (shouldReturnThis) {
 			returnType = cloneSelfType(field);
+			if (getCheckerFrameworkVersion(source).generateReturnsReceiver()) {
+				JCAnnotation rrAnnotation = treeMaker.Annotation(genTypeRef(field, CheckerFrameworkVersion.NAME__RETURNS_RECEIVER), List.<JCExpression>nil());
+				returnType = treeMaker.AnnotatedType(List.of(rrAnnotation), returnType);
+			}
 			returnStatement = treeMaker.Return(treeMaker.Ident(field.toName("this")));
 		}
 		
 		JCMethodDecl d = createSetterWithRecv(access, deprecate, field, treeMaker, setterName, paramName, booleanFieldToSet, returnType, returnStatement, source, onMethod, onParam, recv);
-		if (shouldReturnThis && getCheckerFrameworkVersion(source).generateReturnsReceiver()) {
-			List<JCAnnotation> annotations = d.mods.annotations;
-			if (annotations == null) annotations = List.nil();
-			JCAnnotation anno = treeMaker.Annotation(genTypeRef(source, CheckerFrameworkVersion.NAME__RETURNS_RECEIVER), List.<JCExpression>nil());
-			recursiveSetGeneratedBy(anno, source);
-			d.mods.annotations = annotations.prepend(anno);
-		}
 		return d;
 	}
 	

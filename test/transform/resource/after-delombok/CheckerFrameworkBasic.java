@@ -21,9 +21,8 @@ class CheckerFrameworkBasic {
 	/**
 	 * @return {@code this}.
 	 */
-	@org.checkerframework.common.returnsreceiver.qual.This
 	@java.lang.SuppressWarnings("all")
-	public CheckerFrameworkBasic setZ(final int z) {
+	public @org.checkerframework.common.returnsreceiver.qual.This CheckerFrameworkBasic setZ(final int z) {
 		this.z = z;
 		return this;
 	}
