@@ -1,4 +1,3 @@
-// skip-idempotent
 import java.util.List;
 class CheckerFrameworkBuilder {
 	int x;

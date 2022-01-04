@@ -1,3 +1,4 @@
+// skip-idempotent
 //version 8:
 class CheckerFrameworkBasic {
 	private final int x;

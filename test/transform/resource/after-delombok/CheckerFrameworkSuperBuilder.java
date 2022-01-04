@@ -1,3 +1,4 @@
+// skip-idempotent
 //version 8:
 import java.util.List;
 class CheckerFrameworkSuperBuilder {
