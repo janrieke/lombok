@@ -44,6 +44,7 @@ import org.eclipse.jdt.internal.compiler.ast.FieldReference;
 import org.eclipse.jdt.internal.compiler.ast.IfStatement;
 import org.eclipse.jdt.internal.compiler.ast.IntLiteral;
 import org.eclipse.jdt.internal.compiler.ast.MessageSend;
+import org.eclipse.jdt.internal.compiler.ast.MethodDeclaration;
 import org.eclipse.jdt.internal.compiler.ast.NullLiteral;
 import org.eclipse.jdt.internal.compiler.ast.OperatorIds;
 import org.eclipse.jdt.internal.compiler.ast.ParameterizedQualifiedTypeReference;
@@ -300,13 +301,10 @@ public class EclipseSingularsRecipes {
 		
 		// -- Utility methods --
 		
-		protected Annotation[] generateSelfReturnAnnotations(boolean deprecate, CheckerFrameworkVersion cfv, ASTNode source) {
+		protected Annotation[] generateSelfReturnAnnotations(boolean deprecate, ASTNode source) {
 			Annotation deprecated = deprecate ? generateDeprecatedAnnotation(source) : null;
-			Annotation returnsReceiver = cfv.generateReturnsReceiver() ? generateNamedAnnotation(source, CheckerFrameworkVersion.NAME__RETURNS_RECEIVER) : null;
-			if (deprecated == null && returnsReceiver == null) return null;
-			if (deprecated == null) return new Annotation[] {returnsReceiver};
-			if (returnsReceiver == null) return new Annotation[] {deprecated};
-			return new Annotation[] {deprecated, returnsReceiver};
+			if (deprecated == null) return null;
+			return new Annotation[] {deprecated};
 		}
 		
 		/**
@@ -433,7 +431,7 @@ public class EclipseSingularsRecipes {
 			}
 		}
 		
-		protected void nullBehaviorize(EclipseNode typeNode, SingularData data, List<Statement> statements, Argument arg) {
+		protected void nullBehaviorize(EclipseNode typeNode, SingularData data, List<Statement> statements, Argument arg, MethodDeclaration md) {
 			boolean ignoreNullCollections = data.isIgnoreNullCollections();
 			
 			if (ignoreNullCollections) {
@@ -442,11 +440,11 @@ public class EclipseSingularsRecipes {
 				b.statements = statements.toArray(new Statement[statements.size()]);
 				statements.clear();
 				statements.add(new IfStatement(isNotNull, b, 0, 0));
-				EclipseHandlerUtil.createRelevantNullableAnnotation(typeNode, arg);
+				EclipseHandlerUtil.createRelevantNullableAnnotation(typeNode, arg, md);
 				return;
 			}
 			
-			EclipseHandlerUtil.createRelevantNonNullAnnotation(typeNode, arg);
+			EclipseHandlerUtil.createRelevantNonNullAnnotation(typeNode, arg, md);
 			Statement nullCheck = EclipseHandlerUtil.generateNullCheck(null, data.getPluralName(), typeNode, "%s cannot be null");
 			statements.add(0, nullCheck);
 		}

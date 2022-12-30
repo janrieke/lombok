@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009-2021 The Project Lombok Authors.
+ * Copyright (C) 2009-2022 The Project Lombok Authors.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -1632,6 +1632,14 @@ public class EclipseHandlerUtil {
 	}
 	
 	/**
+	 * Translates the given field into all possible getter names.
+	 * Convenient wrapper around {@link HandlerUtil#toAllGetterNames(lombok.core.AnnotationValues, CharSequence, boolean)}.
+	 */
+	public static List<String> toAllGetterNames(EclipseNode field, boolean isBoolean, AnnotationValues<Accessors> accessors) {
+		return HandlerUtil.toAllGetterNames(field.getAst(), accessors, field.getName(), isBoolean);
+	}
+	
+	/**
 	 * @return the likely getter name for the stated field. (e.g. private boolean foo; to isFoo).
 	 * 
 	 * Convenient wrapper around {@link HandlerUtil#toGetterName(lombok.core.AnnotationValues, CharSequence, boolean)}.
@@ -1641,11 +1649,28 @@ public class EclipseHandlerUtil {
 	}
 	
 	/**
+	 * @return the likely getter name for the stated field. (e.g. private boolean foo; to isFoo).
+	 * 
+	 * Convenient wrapper around {@link HandlerUtil#toGetterName(lombok.core.AnnotationValues, CharSequence, boolean)}.
+	 */
+	public static String toGetterName(EclipseNode field, boolean isBoolean, AnnotationValues<Accessors> accessors) {
+		return HandlerUtil.toGetterName(field.getAst(), accessors, field.getName(), isBoolean);
+	}
+	
+	/**
 	 * Translates the given field into all possible setter names.
 	 * Convenient wrapper around {@link HandlerUtil#toAllSetterNames(lombok.core.AnnotationValues, CharSequence, boolean)}.
 	 */
 	public static java.util.List<String> toAllSetterNames(EclipseNode field, boolean isBoolean) {
 		return HandlerUtil.toAllSetterNames(field.getAst(), getAccessorsForField(field), field.getName(), isBoolean);
+	}
+	
+	/**
+	 * Translates the given field into all possible setter names.
+	 * Convenient wrapper around {@link HandlerUtil#toAllSetterNames(lombok.core.AnnotationValues, CharSequence, boolean)}.
+	 */
+	public static java.util.List<String> toAllSetterNames(EclipseNode field, boolean isBoolean, AnnotationValues<Accessors> accessors) {
+		return HandlerUtil.toAllSetterNames(field.getAst(), accessors, field.getName(), isBoolean);
 	}
 	
 	/**
@@ -1658,6 +1683,15 @@ public class EclipseHandlerUtil {
 	}
 	
 	/**
+	 * @return the likely setter name for the stated field. (e.g. private boolean foo; to setFoo).
+	 * 
+	 * Convenient wrapper around {@link HandlerUtil#toSetterName(lombok.core.AnnotationValues, CharSequence, boolean)}.
+	 */
+	public static String toSetterName(EclipseNode field, boolean isBoolean, AnnotationValues<Accessors> accessors) {
+		return HandlerUtil.toSetterName(field.getAst(), accessors, field.getName(), isBoolean);
+	}
+	
+	/**
 	 * Translates the given field into all possible with names.
 	 * Convenient wrapper around {@link HandlerUtil#toAllWithNames(lombok.core.AnnotationValues, CharSequence, boolean)}.
 	 */
@@ -1666,11 +1700,27 @@ public class EclipseHandlerUtil {
 	}
 	
 	/**
+	 * Translates the given field into all possible with names.
+	 * Convenient wrapper around {@link HandlerUtil#toAllWithNames(lombok.core.AnnotationValues, CharSequence, boolean)}.
+	 */
+	public static java.util.List<String> toAllWithNames(EclipseNode field, boolean isBoolean, AnnotationValues<Accessors> accessors) {
+		return HandlerUtil.toAllWithNames(field.getAst(), accessors, field.getName(), isBoolean);
+	}
+	
+	/**
 	 * Translates the given field into all possible withBy names.
 	 * Convenient wrapper around {@link HandlerUtil#toAllWithByNames(lombok.core.AnnotationValues, CharSequence, boolean)}.
 	 */
 	public static java.util.List<String> toAllWithByNames(EclipseNode field, boolean isBoolean) {
 		return HandlerUtil.toAllWithByNames(field.getAst(), getAccessorsForField(field), field.getName(), isBoolean);
+	}
+	
+	/**
+	 * Translates the given field into all possible withBy names.
+	 * Convenient wrapper around {@link HandlerUtil#toAllWithByNames(lombok.core.AnnotationValues, CharSequence, boolean)}.
+	 */
+	public static java.util.List<String> toAllWithByNames(EclipseNode field, boolean isBoolean, AnnotationValues<Accessors> accessors) {
+		return HandlerUtil.toAllWithByNames(field.getAst(), accessors, field.getName(), isBoolean);
 	}
 	
 	/**
@@ -1683,6 +1733,15 @@ public class EclipseHandlerUtil {
 	}
 	
 	/**
+	 * @return the likely with name for the stated field. (e.g. private boolean foo; to withFoo).
+	 * 
+	 * Convenient wrapper around {@link HandlerUtil#toWithName(lombok.core.AnnotationValues, CharSequence, boolean)}.
+	 */
+	public static String toWithName(EclipseNode field, boolean isBoolean, AnnotationValues<Accessors> accessors) {
+		return HandlerUtil.toWithName(field.getAst(), accessors, field.getName(), isBoolean);
+	}
+	
+	/**
 	 * @return the likely withBy name for the stated field. (e.g. private boolean foo; to withFooBy).
 	 * 
 	 * Convenient wrapper around {@link HandlerUtil#toWithByName(lombok.core.AnnotationValues, CharSequence, boolean)}.
@@ -1692,12 +1751,27 @@ public class EclipseHandlerUtil {
 	}
 	
 	/**
+	 * @return the likely withBy name for the stated field. (e.g. private boolean foo; to withFooBy).
+	 * 
+	 * Convenient wrapper around {@link HandlerUtil#toWithByName(lombok.core.AnnotationValues, CharSequence, boolean)}.
+	 */
+	public static String toWithByName(EclipseNode field, boolean isBoolean, AnnotationValues<Accessors> accessors) {
+		return HandlerUtil.toWithByName(field.getAst(), accessors, field.getName(), isBoolean);
+	}
+	
+	/**
+	 * When generating a setter/getter/wither, should it be made final?
+	 */
+	public static boolean shouldMakeFinal(EclipseNode field, AnnotationValues<Accessors> accessors) {
+		if ((((FieldDeclaration) field.get()).modifiers & ClassFileConstants.AccStatic) != 0) return false;
+		return shouldMakeFinal0(accessors, field.getAst());
+	}
+	/**
 	 * When generating a setter, the setter either returns void (beanspec) or Self (fluent).
 	 * This method scans for the {@code Accessors} annotation and associated config properties to figure that out.
 	 */
-	public static boolean shouldReturnThis(EclipseNode field) {
+	public static boolean shouldReturnThis(EclipseNode field, AnnotationValues<Accessors> accessors) {
 		if ((((FieldDeclaration) field.get()).modifiers & ClassFileConstants.AccStatic) != 0) return false;
-		AnnotationValues<Accessors> accessors = EclipseHandlerUtil.getAccessorsForField(field);
 		return shouldReturnThis0(accessors, field.getAst());
 	}
 	
@@ -1760,9 +1834,12 @@ public class EclipseHandlerUtil {
 	}
 	
 	public static AnnotationValues<Accessors> getAccessorsForField(EclipseNode field) {
+		AnnotationValues<Accessors> values = null;
+		
 		for (EclipseNode node : field.down()) {
 			if (annotationTypeMatches(Accessors.class, node)) {
-				return createAnnotation(Accessors.class, node);
+				values = createAnnotation(Accessors.class, node);
+				break;
 			}
 		}
 		
@@ -1770,15 +1847,16 @@ public class EclipseHandlerUtil {
 		while (current != null) {
 			for (EclipseNode node : current.down()) {
 				if (annotationTypeMatches(Accessors.class, node)) {
-					return createAnnotation(Accessors.class, node);
+					AnnotationValues<Accessors> onType = createAnnotation(Accessors.class, node);
+					values = values == null ? onType : values.integrate(onType);
 				}
 			}
 			current = current.up();
 		}
 		
-		return AnnotationValues.of(Accessors.class, field);
+		return values == null ? AnnotationValues.of(Accessors.class, field) : values;
 	}
-
+	
 	public static EclipseNode upToTypeNode(EclipseNode node) {
 		if (node == null) throw new NullPointerException("node");
 		while (node != null && !(node.get() instanceof TypeDeclaration)) node = node.up();
@@ -2094,6 +2172,15 @@ public class EclipseHandlerUtil {
 		System.arraycopy(originalAnnotationArray, 0, newAnnotationArray, 0, originalAnnotationArray.length);
 		newAnnotationArray[originalAnnotationArray.length] = ann;
 		return newAnnotationArray;
+	}
+	
+	public static void addCheckerFrameworkReturnsReceiver(TypeReference returnType, ASTNode source, CheckerFrameworkVersion cfv) {
+		if (cfv.generateReturnsReceiver()) {
+			Annotation rrAnn = generateNamedAnnotation(source, CheckerFrameworkVersion.NAME__RETURNS_RECEIVER);
+			int levels = returnType.getAnnotatableLevels();
+			returnType.annotations = new Annotation[levels][];
+			returnType.annotations[levels-1] = new Annotation[] {rrAnn};
+		}
 	}
 	
 	private static boolean arrayHasOnlyElementsOfType(Object[] array, Class<?> clazz) {
@@ -2514,18 +2601,25 @@ public class EclipseHandlerUtil {
 		applyAnnotationToMethodDecl(typeNode, mth, lib.getNonNullAnnotation(), lib.isTypeUse());
 	}
 	
-	public static void createRelevantNullableAnnotation(EclipseNode typeNode, Argument arg) {
+	public static void createRelevantNullableAnnotation(EclipseNode typeNode, Argument arg, MethodDeclaration mth) {
 		NullAnnotationLibrary lib = typeNode.getAst().readConfiguration(ConfigurationKeys.ADD_NULL_ANNOTATIONS);
 		if (lib == null) return;
 		
-		applyAnnotationToVarDecl(typeNode, arg, lib.getNullableAnnotation(), lib.isTypeUse());
+		applyAnnotationToVarDecl(typeNode, arg, mth, lib.getNullableAnnotation(), lib.isTypeUse());
 	}
 	
-	public static void createRelevantNonNullAnnotation(EclipseNode typeNode, Argument arg) {
+	public static void createRelevantNullableAnnotation(EclipseNode typeNode, Argument arg, MethodDeclaration mth, List<NullAnnotationLibrary> applied) {
+		NullAnnotationLibrary lib = typeNode.getAst().readConfiguration(ConfigurationKeys.ADD_NULL_ANNOTATIONS);
+		if (lib == null || applied.contains(lib)) return;
+		
+		applyAnnotationToVarDecl(typeNode, arg, mth, lib.getNullableAnnotation(), lib.isTypeUse());
+	}
+	
+	public static void createRelevantNonNullAnnotation(EclipseNode typeNode, Argument arg, MethodDeclaration mth) {
 		NullAnnotationLibrary lib = typeNode.getAst().readConfiguration(ConfigurationKeys.ADD_NULL_ANNOTATIONS);
 		if (lib == null) return;
 		
-		applyAnnotationToVarDecl(typeNode, arg, lib.getNonNullAnnotation(), lib.isTypeUse());
+		applyAnnotationToVarDecl(typeNode, arg, mth, lib.getNonNullAnnotation(), lib.isTypeUse());
 	}
 	
 	private static void applyAnnotationToMethodDecl(EclipseNode typeNode, MethodDeclaration mth, String annType, boolean typeUse) {
@@ -2559,9 +2653,10 @@ public class EclipseHandlerUtil {
 			}
 			a[0] = ann;
 			mth.returnType.annotations[len - 1] = a;
+			mth.bits |= Eclipse.HasTypeAnnotations;
 		}
 	}
-	private static void applyAnnotationToVarDecl(EclipseNode typeNode, Argument arg, String annType, boolean typeUse) {
+	private static void applyAnnotationToVarDecl(EclipseNode typeNode, Argument arg, MethodDeclaration mth, String annType, boolean typeUse) {
 		if (annType == null) return;
 		
 		int partCount = 1;
@@ -2592,6 +2687,9 @@ public class EclipseHandlerUtil {
 			}
 			a[0] = ann;
 			arg.type.annotations[len - 1] = a;
+			arg.type.bits |= Eclipse.HasTypeAnnotations;
+			arg.bits |= Eclipse.HasTypeAnnotations;
+			mth.bits |= Eclipse.HasTypeAnnotations;
 		}
 	}
 	
@@ -2676,15 +2774,7 @@ public class EclipseHandlerUtil {
 	 * Returns {@code true} if the provided node supports static methods and types (top level or static class)
 	 */
 	public static boolean isStaticAllowed(EclipseNode typeNode) {
-		boolean staticAllowed = true;
-		
-		while (typeNode.getKind() != Kind.COMPILATION_UNIT) {
-			if (!staticAllowed) return false;
-			
-			staticAllowed = typeNode.isStatic();
-			typeNode = typeNode.up();
-		}
-		return true;
+		return typeNode.isStatic() || typeNode.up() == null || typeNode.up().getKind() == Kind.COMPILATION_UNIT || isRecord(typeNode);
 	}
 	
 	public static AbstractVariableDeclaration[] getRecordComponents(TypeDeclaration typeDeclaration) {
@@ -2814,7 +2904,7 @@ public class EclipseHandlerUtil {
 			if (!sectionBased) {
 				out = stripLinesWithTagFromJavadoc(stripSectionsFromJavadoc(javadoc), JavadocTag.RETURN);
 			}
-			return shouldReturnThis(node) ? addReturnsThisIfNeeded(out) : out;
+			return shouldReturnThis(node, EclipseHandlerUtil.getAccessorsForField(node)) ? addReturnsThisIfNeeded(out) : out;
 		}
 	}
 	

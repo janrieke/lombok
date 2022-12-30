@@ -1,5 +1,5 @@
 <!--
- Copyright (C) 2020-2021 The Project Lombok Authors.
+ Copyright (C) 2020-2022 The Project Lombok Authors.
   
   Permission is hereby granted, free of charge, to any person obtaining a copy
   of this software and associated documentation files (the "Software"), to deal
@@ -74,7 +74,21 @@ This buildfile is part of projectlombok.org. It takes care of compiling and buil
 		</jar>
 	</target>
 	
-	<target name="compile" depends="version, deps, -setup.build, create.spiProcessor" description="Compiles the code">
+	<target name="create.mavenEcjBootstrapAgent" depends="-setup.build" description="Compiles the Maven ECJ bootstrap agent">
+		<ivy:compile destdir="build/mavenEcjBootstrapAgent" source="1.6" target="1.6" ecj="true">
+			<bootclasspath path="${jdk6-rt.loc}" />
+			<src path="src/mavenEcjBootstrapAgent" />
+		</ivy:compile>
+		<mkdir dir="build/lombok-main/lombok/launch" />
+		<jar destfile="build/lombok-main/lombok/launch/mavenEcjBootstrapAgent.jar" basedir="build/mavenEcjBootstrapAgent">
+			<manifest>
+				<attribute name="Premain-Class" value="lombok.launch.MavenEcjBootstrapAgent" />
+				<attribute name="Can-Redefine-Classes" value="true" />
+			</manifest>
+		</jar>
+	</target>
+	
+	<target name="compile" depends="version, deps, -setup.build, create.spiProcessor, create.mavenEcjBootstrapAgent" description="Compiles the code">
 		<!--
 			1. Compile stubs.
 			2. Compile transplants.

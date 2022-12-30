@@ -59,7 +59,10 @@ public class EclipsePatcher implements AgentLauncher.AgentLaunchable {
 		sm.registerTransformer(instrumentation);
 		sm.setFilter(new Filter() {
 			@Override public boolean shouldTransform(ClassLoader loader, String className, Class<?> classBeingDefined, ProtectionDomain protectionDomain, byte[] classfileBuffer) {
-				if (loader != null && loader.getClass().getName().startsWith("org.sonar.classloader.")) return false; // Relevant to bug #2351
+				if (loader != null) {					
+					if (loader.getClass().getName().startsWith("org.sonar.classloader.")) return false; // Relevant to bug #2351
+					if (loader.toString().contains("com.alexnederlof:jasperreports-plugin")) return false; //Relevant to bug #1036
+				}
 				if (!(loader instanceof URLClassLoader)) return true;
 				ClassLoader parent = loader.getParent();
 				if (parent == null) return true;
@@ -329,10 +332,16 @@ public class EclipsePatcher implements AgentLauncher.AgentLaunchable {
 	
 	private static void patchHideGeneratedNodes(ScriptManager sm) {
 		sm.addScriptIfWitness(OSGI_TYPES, ScriptBuilder.wrapReturnValue()
-				.target(new MethodTarget("org.eclipse.jdt.internal.corext.dom.LinkedNodeFinder", "findByNode"))
+				.target(new MethodTarget("org.eclipse.jdt.internal.corext.dom.LinkedNodeFinder", "findByNode", "org.eclipse.jdt.core.dom.SimpleName[]", "org.eclipse.jdt.core.dom.ASTNode", "org.eclipse.jdt.core.dom.SimpleName"))
 				.target(new MethodTarget("org.eclipse.jdt.internal.corext.dom.LinkedNodeFinder", "findByBinding"))
 				.wrapMethod(new Hook("lombok.launch.PatchFixesHider$PatchFixes", "removeGeneratedSimpleNames", "org.eclipse.jdt.core.dom.SimpleName[]",
 						"org.eclipse.jdt.core.dom.SimpleName[]"))
+				.request(StackRequest.RETURN_VALUE).build());
+		
+		sm.addScriptIfWitness(OSGI_TYPES, ScriptBuilder.wrapReturnValue()
+				.target(new MethodTarget("org.eclipse.jdt.internal.corext.dom.LinkedNodeFinder", "findByNode", "org.eclipse.jdt.core.dom.Name[]", "org.eclipse.jdt.core.dom.ASTNode", "org.eclipse.jdt.core.dom.Name"))
+				.wrapMethod(new Hook("lombok.launch.PatchFixesHider$PatchFixes", "removeGeneratedNames", "org.eclipse.jdt.core.dom.Name[]",
+						"org.eclipse.jdt.core.dom.Name[]"))
 				.request(StackRequest.RETURN_VALUE).build());
 		
 		sm.addScriptIfWitness(OSGI_TYPES, ScriptBuilder.exitEarly()
