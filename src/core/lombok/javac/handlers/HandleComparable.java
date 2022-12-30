@@ -25,8 +25,6 @@ import static lombok.javac.handlers.HandleDelegate.HANDLE_DELEGATE_PRIORITY;
 
 import java.util.Map;
 
-import org.mangosdk.spi.ProviderFor;
-
 import com.sun.tools.javac.code.Symbol;
 import com.sun.tools.javac.code.Symtab;
 import com.sun.tools.javac.code.Type;
@@ -41,8 +39,8 @@ import lombok.javac.JavacNode;
 import lombok.javac.JavacResolution;
 import lombok.javac.ResolutionResetNeeded;
 
-@ProviderFor(JavacASTVisitor.class) @HandlerPriority(HANDLE_DELEGATE_PRIORITY + 101)
-@ResolutionResetNeeded public class HandleComparable extends JavacASTAdapter {
+@HandlerPriority(1024)
+public class HandleComparable extends JavacASTAdapter {
 	
 	@Override public void visitStatement(JavacNode statementNode, JCTree statement) {
 		if (statement instanceof JCBinary) {
