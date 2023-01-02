@@ -21,19 +21,13 @@
  */
 package lombok.javac.handlers;
 
-import static lombok.javac.handlers.HandleDelegate.HANDLE_DELEGATE_PRIORITY;
 import static lombok.javac.handlers.JavacHandlerUtil.deleteAnnotationIfNeccessary;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Map;
 
-import javax.lang.model.element.Name;
-import javax.lang.model.element.TypeElement;
 
 import com.sun.source.tree.Tree.Kind;
-import com.sun.tools.javac.code.Symbol;
-import com.sun.tools.javac.code.Symtab;
 import com.sun.tools.javac.code.Type;
 import com.sun.tools.javac.tree.JCTree;
 import com.sun.tools.javac.tree.JCTree.JCBinary;
@@ -46,7 +40,6 @@ import com.sun.tools.javac.util.List;
 import lombok.core.AST;
 import lombok.core.HandlerPriority;
 import lombok.experimental.EasyComparable;
-import lombok.experimental.FieldDefaults;
 import lombok.javac.JavacASTAdapter;
 import lombok.javac.JavacASTVisitor;
 import lombok.javac.JavacNode;
@@ -65,37 +58,20 @@ import lombok.spi.Provides;
 		if (statement instanceof JCBinary) {
 			JCBinary binary = (JCBinary) statement;
 			if (isCompare(binary.getKind())) {
+				// Don't touch comparisons where at least one operand is a primitive.
 				if (binary.lhs instanceof JCTree.JCLiteral || binary.rhs instanceof JCTree.JCLiteral) {
 					return;
 				}
+				// Check if it's one of the auto-unboxing types.
+				// Those will be handled by the compiler more efficiently.
 				if (checkForAutoUnboxingTypes(statementNode, (JCBinary) statement)) {
 					return;
 				}
 				// Convert comparisons to ".compareTo()".
-				JavacNode parentNode = statementNode.directUp();
-				JavacTreeMaker maker = parentNode.getTreeMaker();
-				JCFieldAccess fieldAccess = maker.Select(binary.lhs, parentNode.toName("compareTo"));
-				JCMethodInvocation compareToCall = maker.Apply(List.<JCExpression>nil(), fieldAccess, List.<JCExpression>of(binary.rhs));
-				binary.lhs = compareToCall;
-				binary.rhs = maker.Literal(TypeTag.typeTag("INT"), 0);
-//				parentNode.rebuild();
+				convertComparisons(statementNode, binary);
 			}
 		}
 		super.visitStatement(statementNode, statement);
-	}
-	
-	private boolean checkForAutoUnboxingTypes(JavacNode statementNode, JCBinary statement) {
-		JavacResolution resolver = new JavacResolution(statementNode.getContext());
-		Map<JCTree, JCTree> resolveMethodMember = resolver.resolveMethodMember(statementNode);
-		if (resolveMethodMember != null) {
-			JCTree lhs = resolveMethodMember.get(statement.lhs);
-			JCTree rhs = resolveMethodMember.get(statement.rhs);
-			// Check if it's one of the auto-unboxing types.
-			// Those will be handled by the compiler more
-			// efficiently.
-			return isAutoUnboxingType(lhs.type) || isAutoUnboxingType(rhs.type);
-		}
-		return false;
 	}
 	
 	@Override public void endVisitType(JavacNode typeNode, JCClassDecl type) {
@@ -108,6 +84,26 @@ import lombok.spi.Provides;
 		}
 		if (annotationNode != null) deleteAnnotationIfNeccessary(annotationNode, EasyComparable.class);
 		super.endVisitType(typeNode, type);
+	}
+
+	private void convertComparisons(JavacNode statementNode, JCBinary binary) {
+		JavacNode parentNode = statementNode.directUp();
+		JavacTreeMaker maker = parentNode.getTreeMaker();
+		JCFieldAccess fieldAccess = maker.Select(binary.lhs, parentNode.toName("compareTo"));
+		JCMethodInvocation compareToCall = maker.Apply(List.<JCExpression>nil(), fieldAccess, List.<JCExpression>of(binary.rhs));
+		binary.lhs = compareToCall;
+		binary.rhs = maker.Literal(TypeTag.typeTag("INT"), 0);
+	}
+	
+	private boolean checkForAutoUnboxingTypes(JavacNode statementNode, JCBinary statement) {
+		JavacResolution resolver = new JavacResolution(statementNode.getContext());
+		Map<JCTree, JCTree> resolveMethodMember = resolver.resolveMethodMember(statementNode);
+		if (resolveMethodMember != null) {
+			JCTree lhs = resolveMethodMember.get(statement.lhs);
+			JCTree rhs = resolveMethodMember.get(statement.rhs);
+			return isAutoUnboxingType(lhs.type) || isAutoUnboxingType(rhs.type);
+		}
+		return false;
 	}
 	
 	private static final java.util.List<String> autoUnboxingTypes = Arrays.asList("java.lang.Boolean", "java.lang.Byte", "java.lang.Character", "java.lang.Float", "java.lang.Integer", "java.lang.Long", "java.lang.Short", "java.lang.Double");
